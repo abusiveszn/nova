@@ -98,11 +98,8 @@ export default async function handler(req: any, res: any) {
       text,
       attachments,
     });
-    const isLocalAllowed =
-      result.local ||
-      process.env.ALLOW_LOCAL_EMAIL === "1" ||
-      process.env.ALLOW_LOCAL_EMAIL?.toLowerCase() === "true" ||
-      process.env.NODE_ENV !== "production";
+    // Only expose devCode to the client if the email could NOT be sent through a real mail provider
+    const isLocalAllowed = Boolean(result.local);
 
     return res.status(200).json({
       ok: true,
