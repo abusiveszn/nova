@@ -47,16 +47,33 @@ export default async function handler(req: any, res: any) {
   const token = signToken(emailKey, code, expiresAt);
 
   const siteUrl = process.env.SITE_URL || "http://localhost:5173";
-  const logoPath = path.join(process.cwd(), "public", "Picsart_26-04-10_14-37-41-214.png");
+
+  // Search candidate paths so the logo is found from any working directory
+  const candidateLogoPaths = [
+    path.join(process.cwd(), "public", "nova-logo.png"),
+    path.join(process.cwd(), "nova-ai", "public", "nova-logo.png"),
+    path.join(process.cwd(), "public", "Picsart_26-04-10_14-37-41-214.png"),
+    path.join(process.cwd(), "nova-ai", "public", "Picsart_26-04-10_14-37-41-214.png"),
+  ];
+
+  let resolvedLogoPath: string | null = null;
+  for (const candidate of candidateLogoPaths) {
+    if (fs.existsSync(candidate)) {
+      resolvedLogoPath = candidate;
+      break;
+    }
+  }
+
   const attachments: any[] = [];
   let logoCid: string | null = null;
-  
-  if (fs.existsSync(logoPath)) {
-    logoCid = "logo@nova";
+
+  if (resolvedLogoPath) {
+    logoCid = "nova-logo";
     attachments.push({
-      filename: "Picsart_26-04-10_14-37-41-214.png",
-      path: logoPath,
+      filename: "nova-logo.png",
+      path: resolvedLogoPath,
       cid: logoCid,
+      contentDisposition: "inline",
     });
   }
 
@@ -64,8 +81,12 @@ export default async function handler(req: any, res: any) {
     <div style="font-family:Inter,system-ui,Arial,sans-serif;color:#0f172a;padding:24px;background:#f8fafc;">
       <div style="max-width:600px;margin:0 auto;background:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 6px 18px rgba(15,23,42,0.06);">
         <div style="padding:28px;text-align:center;background:linear-gradient(90deg,#7c3aed,#06b6d4);color:#fff;">
-          ${logoCid ? `<img src="cid:${logoCid}" alt="NOVA" style="height:48px;margin-bottom:8px;object-fit:contain;"/>` : `<div style="font-weight:700;font-size:20px">NOVA</div>`}
-          <div style="font-size:14px;opacity:0.95">Account verification</div>
+          ${
+            logoCid
+              ? `<img src="cid:${logoCid}" alt="NOVA" width="56" height="56" style="display:block;margin:0 auto 10px;width:56px;height:56px;object-fit:contain;border:0;outline:none;" />`
+              : `<div style="font-weight:700;font-size:22px;margin-bottom:6px">NOVA</div>`
+          }
+          <div style="font-size:14px;opacity:0.95;font-weight:500">Account verification</div>
         </div>
         <div style="padding:28px;color:#0f172a;">
           <h2 style="margin:0 0 12px;font-size:20px">Hi ${name || "there"},</h2>
