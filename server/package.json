@@ -1,0 +1,30 @@
+{
+  "name": "nova-ai-api",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "main": "index.js",
+  "engines": {
+    "node": "24.x"
+  },
+  "scripts": {
+    "dev": "tsx watch index.ts",
+    "start": "node index.js",
+    "build": "esbuild index.ts --platform=node --target=node20 --bundle --format=esm --packages=external --outfile=index.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "esbuild": "^0.28.2",
+    "express": "^5.2.1",
+    "mongoose": "^9.11.3",
+    "nodemailer": "^8.0.10"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "@types/node": "^25.9.1",
+    "tsx": "^4.23.12",
+    "typescript": "~5.9.3"
+  }
+}
